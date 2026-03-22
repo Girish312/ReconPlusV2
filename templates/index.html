@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>ReconPlus</title>
+
+<style>
+
+body{
+font-family: Arial, Helvetica, sans-serif;
+background:#0f172a;
+color:white;
+text-align:center;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#020617;
+padding:30px;
+font-size:28px;
+font-weight:bold;
+border-bottom:2px solid #1e293b;
+}
+
+.container{
+margin-top:80px;
+}
+
+.scan-box{
+background:#1e293b;
+width:450px;
+margin:auto;
+padding:40px;
+border-radius:10px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+}
+
+input{
+width:90%;
+padding:12px;
+margin-top:15px;
+border-radius:5px;
+border:none;
+font-size:16px;
+}
+
+button{
+margin-top:20px;
+padding:14px 40px;
+font-size:16px;
+background:#22c55e;
+border:none;
+border-radius:6px;
+cursor:pointer;
+color:white;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+.scan-info{
+margin-top:40px;
+font-size:16px;
+color:#94a3b8;
+}
+
+.report-link{
+display:inline-block;
+margin-top:15px;
+padding:10px 20px;
+background:#3b82f6;
+border-radius:5px;
+text-decoration:none;
+color:white;
+}
+
+.report-link:hover{
+background:#2563eb;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+ReconPlus
+</div>
+
+<div class="container">
+
+<div class="scan-box">
+
+<h2>Start Security Scan</h2>
+
+<form action="/scan" method="post">
+
+<input type="text" name="domain" placeholder="Enter Target Domain (example.com)" required>
+
+<br>
+
+<button type="submit">
+Start Scan
+</button>
+
+</form>
+
+<div class="scan-info">
+
+<h3>Last Scan</h3>
+
+<p>Target: {{ scan }}</p>
+
+<p>Time: {{ scan_time }}</p>
+
+{% if report %}
+<a class="report-link" href="/output/report.pdf">Download Last Report</a>
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

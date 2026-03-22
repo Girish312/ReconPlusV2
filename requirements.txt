@@ -1,0 +1,12 @@
+requests
+python-nmap
+python-wappalyzer
+networkx
+matplotlib
+plotly
+flask
+flask-cors
+pdfkit
+schedule
+python-dotenv
+reportlab

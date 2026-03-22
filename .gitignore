@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Runtime output
+output/
+
+# Frontend dependencies/build
+frontend/node_modules/
+frontend/build/
+
+# Frontend local env
+frontend/.env.local
+
+# OS/editor files
+.vscode/
+.DS_Store
+Thumbs.db

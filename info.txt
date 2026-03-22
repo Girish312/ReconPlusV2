@@ -1,0 +1,4 @@
+recon_guard
+
+python3 main.py
+cat output/recon.json

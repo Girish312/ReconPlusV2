@@ -1,0 +1,13 @@
+admin
+login
+dashboard
+api
+robots.txt
+sitemap.xml
+uploads
+images
+js
+css
+backup
+config
+phpinfo.php
