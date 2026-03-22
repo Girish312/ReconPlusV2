@@ -312,65 +312,7 @@ REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 REACT_APP_FIREBASE_APP_ID=your_app_id
 REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
- 
-### CLI (headless run)
- 
-The core entry point is `run_recon(domain)` in `main.py`:
- 
-```bash
-python3 -c "from main import run_recon; run_recon('example.com')"
-```
- 
----
- 
-## 🔌 Frontend Integration Notes
- 
-**Endpoint:** `POST /api/scan`
- 
-**Request body:** JSON with `domain` (string)
- 
-**Response:** JSON object with scan metadata and report links
- 
-**Example request (curl):**
- 
-```bash
-curl -X POST -H "Content-Type: application/json" \
-	-d '{"domain":"example.com"}' \
-	http://127.0.0.1:5000/api/scan
-```
- 
-Useful API routes:
 
-- `GET /api/health`
-- `POST /api/scan`
-- `GET /api/report/json`
-- `GET /api/report/pdf`
-
----
-
-## 🧩 Recent Integration Changes
-
-This section summarizes what was integrated between frontend and backend in the latest iteration.
-
-- Added stable frontend to backend flow:
-	- Dashboard triggers scans using `POST /api/scan` (JSON body).
-	- After scan completion, frontend refreshes data from `GET /api/report/json`.
-- Updated dashboard data behavior:
-	- Risk cards and chart now read correct severity counts from `risk_summary`.
-	- Security scan progress bar now updates dynamically during scan execution.
-- Updated backend scoring and summary behavior:
-	- `risk_summary` includes web vulnerability severities.
-	- Overall numeric score now reflects both service posture and web findings.
-- Improved remediation mapping:
-	- `core/remediation/remedy_engine.py` now uses keyword-based matching for nuclei finding names.
-	- Findings such as Terrapin/weak SSH crypto now receive specific remedies instead of generic fallback text.
-- Expanded roadmap recommendations:
-	- Web findings priorities mapped as: `CRITICAL/HIGH -> IMMEDIATE`, `MEDIUM -> MEDIUM`.
-- Report generation improvements:
-	- HTML report now includes executive summary, risk summary, and website vulnerability findings.
-	- PDF report layout improved for vulnerability and roadmap readability.
-	- PDF download endpoint disables caching and serves timestamped filenames to avoid stale file downloads.
- 
 ---
  
 ## 🔧 Configuration and Behavior
@@ -378,17 +320,6 @@ This section summarizes what was integrated between frontend and backend in the 
 - Output folder is `output/` and is created automatically.
 - Scans are blocking and can take time depending on target size.
 - The scanner depends on external binaries; if those tools are missing, the scan will return empty results for that phase.
- 
----
- 
-## 🐛 Troubleshooting
- 
-| Issue | Solution |
-|---|---|
-| `subfinder`, `httpx`, `nuclei` not found | Ensure `$HOME/go/bin` is on `PATH` |
-| PDF generation error | Install `reportlab` |
-| `ss` or `ip` not found | Run on Linux or WSL2 |
-| NVD rate limits | Use a valid NVD API key and avoid rapid repeated runs |
  
 ---
  
@@ -406,19 +337,6 @@ ReconPlus generates reports in multiple formats:
 - Risk severity levels
 - Attack surface analysis
 - Security recommendations
- 
----
- 
-## 🔮 Future Improvements
- 
-Planned features for ReconPlus:
- 
-- 📈 Attack graph visualization
-- 📊 Scan history dashboard
-- 🔗 CVE database integration
-- 🚨 Real-time vulnerability alerts
-- 🌐 Distributed scanning agents
-- 🧠 AI-based risk prioritization
  
 ---
  
