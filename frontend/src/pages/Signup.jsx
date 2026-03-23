@@ -9,6 +9,7 @@ import { auth, db } from "../firebase/firebase";
 export default function Signup() {
   const { role } = useParams();
   const navigate = useNavigate();
+  const normalizedRole = role === "admin" ? "user" : role;
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,35 @@ export default function Signup() {
     admin: "Admin",
     user: "User",
   };
+
+  if (role === "admin") {
+    return (
+      <>
+        <div className="min-h-screen bg-[#0a0e1a] text-white flex items-center justify-center px-6">
+          <div className="max-w-xl w-full bg-[linear-gradient(41deg,#171717_30%,#0B303C_96%,#0B303C_100%)] border border-cyan-500/30 rounded-3xl p-8 text-center">
+            <h2 className="text-3xl font-bold mb-4">Admin Signup Disabled</h2>
+            <p className="text-gray-300 mb-6">
+              Admin accounts are restricted and must be provisioned by the project owner.
+            </p>
+            <button
+              onClick={() => navigate("/signin/admin")}
+              className="px-6 py-3 rounded-md bg-cyan-400 text-black font-semibold hover:bg-cyan-300 transition"
+            >
+              Go to Admin Sign In
+            </button>
+          </div>
+        </div>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            duration={toast.duration}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -67,7 +97,7 @@ export default function Signup() {
       await setDoc(doc(db, "users", user.uid), {
         name: formData.name,
         email: formData.email,
-        role: role,
+        role: normalizedRole || "user",
         createdAt: new Date(),
       });
 
@@ -80,7 +110,7 @@ export default function Signup() {
       
       // Navigate to signup success page after brief delay
       setTimeout(() => {
-        navigate("/signup-success", { state: { role } });
+        navigate("/signup-success", { state: { role: normalizedRole || "user" } });
       }, 500);
 
     } catch (error) {
@@ -146,7 +176,7 @@ export default function Signup() {
             <div className="bg-[linear-gradient(41deg,#171717_30%,#0B303C_96%,#0B303C_100%)] border border-cyan-500/30 rounded-3xl px-10 py-12 shadow-2xl">
 
               <h2 className="text-3xl font-bold mb-8 text-center">
-                {roleTitleMap[role] || "User"} Sign Up
+                {roleTitleMap[normalizedRole] || "User"} Sign Up
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -249,7 +279,7 @@ export default function Signup() {
                 <p className="text-center text-sm text-gray-400 mt-6">
                   Already have an account?{" "}
                   <span
-                    onClick={() => navigate(`/signin/${role}`)}
+                    onClick={() => navigate(`/signin/${normalizedRole || "user"}`)}
                     className="text-cyan-400 cursor-pointer hover:underline"
                   >
                     Sign in

@@ -1,11 +1,15 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:5000";
 
-async function buildAuthHeaders(currentUser) {
-  const headers = {
-    "Content-Type": "application/json",
-  };
+async function buildAuthHeaders(currentUser, options = {}) {
+  const includeJsonContentType = options.includeJsonContentType !== false;
+  const includeAuth = options.includeAuth !== false;
+  const headers = {};
 
-  if (currentUser) {
+  if (includeJsonContentType) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (includeAuth && currentUser) {
     try {
       const token = await currentUser.getIdToken();
       headers.Authorization = `Bearer ${token}`;
@@ -35,7 +39,7 @@ async function parseResponse(response) {
 }
 
 export async function runScan(domain, currentUser) {
-  const headers = await buildAuthHeaders(currentUser);
+  const headers = await buildAuthHeaders(currentUser, { includeJsonContentType: true });
 
   const response = await fetch(`${API_BASE_URL}/api/scan`, {
     method: "POST",
@@ -46,12 +50,58 @@ export async function runScan(domain, currentUser) {
   return parseResponse(response);
 }
 
+export async function fetchScanStatus(currentUser) {
+  const headers = await buildAuthHeaders(currentUser, {
+    includeJsonContentType: false,
+    includeAuth: false,
+  });
+
+  const response = await fetch(`${API_BASE_URL}/api/scan/status`, {
+    method: "GET",
+    headers,
+    cache: "no-store",
+  });
+
+  return parseResponse(response);
+}
+
 export async function fetchReconReport(currentUser) {
-  const headers = await buildAuthHeaders(currentUser);
+  const headers = await buildAuthHeaders(currentUser, {
+    includeJsonContentType: false,
+    includeAuth: false,
+  });
 
   const response = await fetch(`${API_BASE_URL}/api/report/json`, {
     method: "GET",
     headers,
+    cache: "no-store",
+  });
+
+  return parseResponse(response);
+}
+
+export async function askAssistant(message, currentUser) {
+  const headers = await buildAuthHeaders(currentUser, { includeJsonContentType: true });
+
+  const response = await fetch(`${API_BASE_URL}/api/assistant/chat`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ message }),
+  });
+
+  return parseResponse(response);
+}
+
+export async function fetchAssistantStatus(currentUser) {
+  const headers = await buildAuthHeaders(currentUser, {
+    includeJsonContentType: false,
+    includeAuth: false,
+  });
+
+  const response = await fetch(`${API_BASE_URL}/api/assistant/status`, {
+    method: "GET",
+    headers,
+    cache: "no-store",
   });
 
   return parseResponse(response);

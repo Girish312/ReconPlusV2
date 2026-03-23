@@ -90,9 +90,6 @@ export default function NavbarDashboard({ userName, userRole, dashboardType = "a
                   >
                     Dashboard
                   </button>
-                  <a href="#features" className="font-semibold hover:text-cyan-400">
-                    Features
-                  </a>
                 </div>
               )}
             </div>
@@ -122,24 +119,6 @@ export default function NavbarDashboard({ userName, userRole, dashboardType = "a
                       className="block w-full text-left px-4 py-3 hover:bg-cyan-500/10 border-b border-cyan-500/20"
                     >
                       Dashboard
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/profile");
-                        setProfileMenuOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-3 hover:bg-cyan-500/10 border-b border-cyan-500/20"
-                    >
-                      Profile Settings
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/account-settings");
-                        setProfileMenuOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-3 hover:bg-cyan-500/10 border-b border-cyan-500/20"
-                    >
-                      Account Settings
                     </button>
                     <button
                       onClick={handleLogout}
@@ -225,29 +204,6 @@ export default function NavbarDashboard({ userName, userRole, dashboardType = "a
               className="text-left text-white hover:text-cyan-400 transition-colors duration-300 text-lg font-semibold"
             >
               Dashboard
-            </button>
-            <a
-              href="#features"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-white hover:text-cyan-400 transition-colors duration-300 text-lg font-semibold"
-            >
-              Features
-            </a>
-            <button
-              onClick={() => {
-                handleNav("/profile");
-              }}
-              className="text-left text-white hover:text-cyan-400 transition-colors duration-300 text-lg font-semibold"
-            >
-              Profile Settings
-            </button>
-            <button
-              onClick={() => {
-                handleNav("/account-settings");
-              }}
-              className="text-left text-white hover:text-cyan-400 transition-colors duration-300 text-lg font-semibold"
-            >
-              Account Settings
             </button>
             <button
               onClick={() => {

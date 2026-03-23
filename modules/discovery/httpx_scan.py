@@ -3,8 +3,32 @@ import shutil
 import os
 
 
+def _is_projectdiscovery_httpx(binary_path):
+    try:
+        version_check = subprocess.run(
+            [binary_path, "-version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        version_text = f"{version_check.stdout}\n{version_check.stderr}".lower()
+        return "projectdiscovery" in version_text or "httpx" in version_text
+    except Exception:
+        return False
+
+
 def resolve_httpx_binary():
-    return shutil.which("httpx") or os.path.join(os.path.expanduser("~"), "go", "bin", "httpx")
+    go_binary = os.path.join(os.path.expanduser("~"), "go", "bin", "httpx")
+    path_binary = shutil.which("httpx")
+
+    # Prefer the Go-installed ProjectDiscovery binary when available.
+    if os.path.isfile(go_binary) and os.access(go_binary, os.X_OK):
+        return go_binary
+
+    if path_binary and _is_projectdiscovery_httpx(path_binary):
+        return path_binary
+
+    return go_binary if path_binary is None else path_binary
 
 def check_live_hosts(subdomains):
 

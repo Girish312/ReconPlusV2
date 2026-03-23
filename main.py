@@ -27,29 +27,41 @@ from core.scoring.cvss_engine import (
 from core.scanner_engine import run_scan
 
 
-def run_recon(domain):
+def run_recon(domain, progress_callback=None):
+
+    def emit_progress(progress, stage, message):
+        if callable(progress_callback):
+            try:
+                progress_callback(progress, stage, message)
+            except Exception:
+                pass
 
     print("\n[+] Starting ReconGuard Security Scan\n")
+    emit_progress(5, "initializing", "Preparing scan pipeline")
 
     # Phase 0: Website Target Input
     #domain = input("Enter target domain for web vulnerability scan: ")
 
     print("\n[+] Running website vulnerability scan...")
-    web_results = run_scan(domain)
+    emit_progress(12, "web_scan", "Running website vulnerability scan")
+    web_results = run_scan(domain, progress_callback=progress_callback)
 
     # Phase 1: Service Enumeration
     print("[+] Enumerating running services...")
+    emit_progress(24, "service_enumeration", "Enumerating running services")
     raw_services = get_running_services()
     services = deduplicate_services(raw_services)
 
     # Phase 2: CVE Enrichment
     print("[+] Enriching services with CVE data...")
+    emit_progress(36, "cve_enrichment", "Enriching services with CVE data")
     services = enrich_services_with_cves(services)
 
     final_services = []
 
     # Phase 3: Exposure + Risk Logic
     print("[+] Classifying exposure and adjusting risk...")
+    emit_progress(48, "risk_adjustment", "Classifying exposure and adjusting risk")
 
     for svc in services:
 
@@ -66,10 +78,12 @@ def run_recon(domain):
 
     # Phase 4: Privilege Escalation
     print("[+] Running privilege escalation analysis...")
+    emit_progress(60, "privesc", "Running privilege escalation analysis")
     privesc_findings = run_privesc_analysis()
 
     # Phase 5: Attack Chains
     print("[+] Building attack chains...")
+    emit_progress(70, "attack_chains", "Building attack chains")
     attack_chains = build_attack_chains(final_services, privesc_findings)
     attack_chains = enrich_chains_with_mitre(attack_chains)
 
@@ -78,6 +92,7 @@ def run_recon(domain):
 
     # Phase 7: Numeric scoring
     print("[+] Calculating risk scores...")
+    emit_progress(78, "scoring", "Calculating numeric risk scores")
     final_services = score_services(final_services)
 
     overall_score = calculate_overall_risk(final_services, web_results)
@@ -85,6 +100,7 @@ def run_recon(domain):
 
     # Phase 8: Risk Summary
     risk_summary = analyze_risk(final_services)
+    emit_progress(84, "risk_summary", "Compiling risk summary")
 
     # Add web vulnerabilities to risk summary
     for vuln in web_results:
@@ -98,6 +114,7 @@ def run_recon(domain):
         privesc_findings,
         web_results
     )
+    emit_progress(90, "recommendations", "Generating remediation recommendations")
 
     # Build Recon Data
     recon_data = {
@@ -117,19 +134,23 @@ def run_recon(domain):
     # Executive Summary
     executive_summary = generate_executive_summary(recon_data)
     recon_data["executive_summary"] = executive_summary
+    emit_progress(94, "executive_summary", "Generating executive summary")
 
     # Save JSON Output
     with open("output/recon.json", "w") as f:
         json.dump(recon_data, f, indent=4)
+    emit_progress(96, "persist_json", "Saving JSON report")
 
     print("\n[+] JSON results saved -> output/recon.json")
 
     # Generate Reports
     report_path = generate_html_report(recon_data)
     print(f"\n[+] HTML report generated at: {report_path}")
+    emit_progress(98, "html_report", "Generating HTML report")
 
     pdf_path = generate_pdf_report(recon_data)
     print(f"[+] PDF report generated at: {pdf_path}")
+    emit_progress(100, "completed", "Scan completed")
 
     # Console Summary
     print("\n========== SCAN SUMMARY ==========")

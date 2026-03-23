@@ -1,296 +1,179 @@
-# 🛡 ReconPlus
- 
+# ReconPlus
+
 **Automated Security Reconnaissance & Risk Assessment Framework**
- 
+
 ReconPlus is an automated security reconnaissance and vulnerability assessment framework designed to identify system-level exposures, web application vulnerabilities, and potential attack paths.
- 
-The framework combines reconnaissance, network scanning, web vulnerability detection, privilege escalation analysis, and intelligent risk scoring to provide a complete security overview of a target environment.
- 
-ReconPlus helps administrators, developers, and security researchers detect security weaknesses before attackers can exploit them.
- 
-The system produces structured reports with actionable remediation recommendations, making it easier for both technical and non-technical users to understand and fix security issues.
- 
+
+It combines reconnaissance, web scanning, privilege-escalation checks, risk scoring, and report generation to provide a complete security overview of a target environment.
+
 ---
- 
-## 🎯 Objectives
- 
+
+## Objectives
+
 ReconPlus helps security teams understand:
- 
+
 - Attack surface exposure
 - Potential compromise paths
 - Security misconfigurations
 - Service exposure risks
 - Vulnerability prioritization
- 
+
 ---
- 
-## 🚀 Key Features
- 
+
+## Key Features
+
 | Feature | Description |
 |---|---|
-| 🔎 **Subdomain Enumeration** | Discover hidden subdomains and expand attack surface |
-| 🌐 **Live Host Detection** | Identify active hosts and web services |
-| 🧠 **Technology Fingerprinting** | Detect frameworks, servers, and technologies used |
-| 📂 **Directory & Endpoint Discovery** | Find hidden paths, APIs, and resources |
-| 🧨 **Web Vulnerability Scanning** | Detect common vulnerabilities like SQLi and XSS |
-| 🖥 **Device Service Exposure Analysis** | Identify open ports and exposed services |
-| 🔐 **Privilege Escalation Detection** | Analyze host system for escalation risks |
-| 📊 **Risk Scoring Engine** | Prioritize vulnerabilities based on severity |
-| 🛠 **Automated Remediation Suggestions** | Provide security fix recommendations |
-| 📑 **Multi-Format Reports** | Generate reports in JSON, HTML, and PDF |
-| 🌍 **Web Dashboard** | User-friendly interface to launch and monitor scans |
- 
+| **Subdomain Enumeration** | Discover subdomains and expand attack surface |
+| **Live Host Detection** | Identify active hosts and web services |
+| **Web Vulnerability Scanning** | Detect known vulnerabilities using templates |
+| **Service Exposure Analysis** | Identify exposed services and risks |
+| **Privilege Escalation Detection** | Analyze host for escalation weaknesses |
+| **Risk Scoring Engine** | Compute severity distribution and overall score |
+| **Automated Remediation Suggestions** | Provide fix recommendations |
+| **Multi-Format Reports** | Generate JSON, HTML, and PDF reports |
+| **Web Dashboard** | React dashboard for scanning and visualization |
+| **Floating AI Assistant** | Scan-aware hybrid assistant (fine-tuned model + deterministic security guidance) |
+
 ---
- 
-## 🔍 Security Assessment Modules
- 
-### 1️⃣ Device Security Scanning
- 
+
+## Security Assessment Modules
+
+### 1. Device Security Scanning
+
 ReconPlus analyzes the host system for exposed or insecure services.
- 
-**Example Services Detected:**
- 
-- Redis
-- PostgreSQL
-- DNS
-- SSH
-- FTP
- 
+
 **Security Checks:**
- 
-- Open ports
-- Service exposure level
+
+- Open ports and service exposure
 - Risk scoring
-- Possible attack paths
- 
-### 2️⃣ Web Application Vulnerability Scanning
- 
-ReconPlus scans web applications for common security vulnerabilities.
- 
-**Example Vulnerabilities Detected:**
- 
-- SQL Injection (SQLi)
-- Cross-Site Scripting (XSS)
-- Directory Traversal
-- Security Misconfigurations
-- Hidden Endpoints / APIs
- 
+- Attack path context
+
+### 2. Web Application Vulnerability Scanning
+
+ReconPlus scans web targets for common security vulnerabilities and misconfigurations.
+
 ---
- 
-## 🧰 Integrated Security Tools
- 
-ReconPlus integrates several industry-standard open-source security tools to perform different stages of scanning.
- 
+
+## Integrated Security Tools
+
 | Tool | Purpose |
 |---|---|
 | **Amass** | Subdomain enumeration |
 | **Subfinder** | Passive subdomain discovery |
 | **HTTPX** | Live host and web service detection |
-| **Wappalyzer** | Technology fingerprinting |
-| **Nmap** | Network scanning and service detection |
+| **Nmap** | Network/service scanning |
 | **Feroxbuster** | Directory and endpoint discovery |
 | **Nuclei** | Template-based vulnerability scanning |
- 
-These tools work together to provide a comprehensive reconnaissance and vulnerability assessment pipeline.
- 
+
 ---
- 
-## ⚙️ How ReconPlus Works
- 
-The workflow of ReconPlus follows a structured security scanning pipeline.
- 
-**1️⃣ Target Input**
-The user enters a target domain through the web dashboard.
- 
-**2️⃣ Reconnaissance**
-The system performs subdomain enumeration and identifies live hosts.
- 
-**3️⃣ Network Scanning**
-ReconPlus performs port scanning to detect exposed services running on the target.
- 
-**4️⃣ Technology Analysis**
-The system fingerprints web technologies and frameworks used by the target.
- 
-**5️⃣ Directory Discovery**
-Hidden directories, APIs, and endpoints are discovered.
- 
-**6️⃣ Vulnerability Detection**
-The framework scans for known vulnerabilities and security misconfigurations.
- 
-**7️⃣ Privilege Escalation Checks**
-ReconPlus analyzes the local environment for potential privilege escalation risks.
- 
-**8️⃣ Risk Analysis**
-A risk scoring engine evaluates:
- 
-- Severity
-- Exploitability
-- Potential impact
- 
-**9️⃣ Report Generation**
-ReconPlus generates detailed reports containing:
- 
-- Vulnerability descriptions
-- Severity levels
-- Attack surface insights
-- Recommended remediation steps
- 
-**Outputs:**
- 
-- `output/recon.json` — full machine-readable results
-- `output/report.html` — HTML report
-- `output/report.pdf` — PDF report
- 
+
+## How ReconPlus Works
+
+1. User submits a target domain.
+2. Recon stages discover subdomains and live hosts.
+3. Nuclei scans live targets for vulnerabilities.
+4. Local checks run privilege-escalation and host risk logic.
+5. Scoring engine computes `risk_summary` and overall risk score.
+6. Report generators create `output/recon.json`, `output/report.html`, and `output/report.pdf`.
+7. Dashboard fetches latest results from `GET /api/report/json` and renders risk cards/charts.
+8. Floating AI assistant reads report context and routes query through hybrid response logic.
+9. Assistant returns either rule-based security guidance (fast path) or model-generated answer (LLM path).
+
 ---
- 
-## 📁 Project Layout
- 
-```
+
+## Project Layout
+
+```text
 app.py          Flask server and API backend
 main.py         Orchestrates the scan pipeline
-core/           Scan, scoring, risk analysis, reporting
-modules/        External tool wrappers (subfinder, httpx, nuclei)
+core/           Scan, scoring, risk analysis, remediation, reporting, assistant
+core/assistant/ Assistant engine + model-loading logic (ZIP/dir/LoRA support)
+core/reporting/ HTML/PDF/JSON report generation modules
+modules/        External tool wrappers (subfinder, httpx, nuclei, etc.)
 templates/      Legacy Flask HTML page
 output/         Generated reports (created at runtime)
 frontend/       React + Firebase frontend app
+frontend/src/components/FloatingAssistant.jsx  Floating assistant widget
+frontend/src/services/reconApi.js              Frontend API integration client
 ```
- 
+
 ---
- 
-## 📋 Requirements
- 
+
+## Requirements
+
 ### Python
- 
-- Python 3.10+ recommended
+
+- Python 3.10+
 - `pip` and `venv`
-- Python packages: install from `requirements.txt`
-- `reportlab` is required for PDF generation (already listed in `requirements.txt`)
- 
-### System Tools (external binaries)
- 
-- `subfinder` — subdomain discovery
-- `httpx` — live host checking
-- `nuclei` — vulnerability scanning
- 
-### Linux-only Utilities
- 
-- `ss` — service enumeration
-- `ip` — network interface discovery
- 
-> If you are on macOS or Windows, use WSL2 or a Linux VM to avoid missing `ss` and `ip`.
- 
+- Install dependencies from `requirements.txt`
+- `reportlab` is required for PDF generation (already included)
+
+### System Tools
+
+- `subfinder`
+- `httpx`
+- `nuclei`
+
+### Linux Utilities (for full local host checks)
+
+- `ss`
+- `ip`
+
+> For Windows, use WSL2 for best compatibility.
+
 ---
- 
-## 🐧 Install Steps (Linux / WSL)
- 
-**1. Create a virtual environment and install Python deps:**
- 
+
+## Install Steps (Linux / WSL)
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-```
- 
-**2. Install external recon tools (Go required):**
- 
-```bash
-go version
-go env GOPATH
+
+# Go tools
 go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest
 go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-echo 'export PATH="$PATH:$HOME/go/bin"' >> ~/.bashrc
+
+echo 'export PATH="$PATH:$HOME/go/bin:$HOME/.cargo/bin"' >> ~/.bashrc
 source ~/.bashrc
-which subfinder
-which httpx
-which nuclei
 ```
- 
-**3. Ensure the Go bin path is on `PATH`:**
- 
-```bash
-export PATH="$PATH:$HOME/go/bin"
-```
- 
+
 ---
- 
-## 🍎 Install Steps (macOS)
- 
-macOS is not fully supported for local service enumeration because the code uses `ss` and `ip`. For a smooth setup:
- 
-- Use WSL2 or a Linux VM, then follow the Linux steps above.
- 
-If you still want to run on macOS, you can run the web recon parts, but the local service enumeration and network info may fail.
- 
----
- 
-## 🪟 Install Steps (Windows)
- 
-Windows is not fully supported for local service enumeration in native PowerShell or CMD. The easiest path is WSL2 (Windows Subsystem for Linux) with Ubuntu.
- 
-**Step-by-step (Windows 10/11):**
- 
-1. Open PowerShell as Administrator and run:
- 
+
+## Install Steps (Windows)
+
+Use WSL2 Ubuntu, then follow Linux steps inside Ubuntu:
+
 ```powershell
-wsl --install
-```
-OR
-```powershell
-wsl --list --online
 wsl --install -d Ubuntu
 ```
 
-2. Restart your PC when prompted.
- 
-3. Open the new "Ubuntu" app from the Start menu and create a username and password.
- 
-4. In the Ubuntu window, run:
- 
-```bash
-sudo apt update
-sudo apt install -y python3 python3-venv python3-pip git golang-go
-```
- 
-5. Go to the project folder (example):
- 
-```bash
-cd /mnt/c/Users/YourWindowsUsername/path/to/reconplus-main
-```
- 
-6. Follow the Linux steps above inside the Ubuntu window.
- 
 ---
- 
-## 🔑 NVD API Key
- 
-This project uses the NVD API to enrich services with CVE data. The API key is stored in `config.py` as `NVD_API_KEY`.
- 
-Update this value before running scans:
- 
+
+## NVD API Key
+
+Set your NVD API key in `config.py`:
+
 ```python
 NVD_API_KEY = "YOUR_NVD_API_KEY"
 ```
- 
+
 ---
- 
-## ▶️ Running the Project
- 
+
+## Running the Project
+
 ### Backend API (Flask)
- 
-Start the Flask server:
- 
+
 ```bash
+source .venv/bin/activate
 python3 app.py
 ```
- 
-Then open: `http://127.0.0.1:5000`
- 
-The web UI accepts a domain and triggers a full scan. The server returns `output/report.pdf` as a download.
+
+Backend: `http://127.0.0.1:5000`
 
 ### Frontend UI (React + Firebase)
-
-In a second terminal, run the frontend from the integrated folder:
 
 ```bash
 cd frontend
@@ -298,9 +181,9 @@ npm install
 npm start
 ```
 
-The React app starts at `http://127.0.0.1:3000` and calls backend APIs on `http://127.0.0.1:5000`.
+Frontend: `http://127.0.0.1:3000`
 
-Create `frontend/.env.local` with your Firebase keys and backend URL:
+Create `frontend/.env.local`:
 
 ```env
 REACT_APP_API_BASE_URL=http://127.0.0.1:5000
@@ -314,36 +197,138 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
 
 ---
- 
-## 🔧 Configuration and Behavior
- 
-- Output folder is `output/` and is created automatically.
-- Scans are blocking and can take time depending on target size.
-- The scanner depends on external binaries; if those tools are missing, the scan will return empty results for that phase.
- 
+
+## Frontend Integration Notes
+
+Core routes used by dashboard:
+
+- `GET /api/health`
+- `POST /api/scan`
+- `GET /api/report/json`
+- `GET /api/report/pdf`
+- `POST /api/assistant/chat`
+- `GET /api/assistant/status`
+
+`POST /api/scan` request body:
+
+```json
+{"domain": "scanme.nmap.org"}
+```
+
 ---
- 
-## 📊 Report Output
- 
-ReconPlus generates reports in multiple formats:
- 
-- **JSON** — Machine-readable data
-- **HTML** — Interactive web report
-- **PDF** — Printable security report
- 
-**Reports include:**
- 
-- Detected vulnerabilities
-- Risk severity levels
-- Attack surface analysis
-- Security recommendations
- 
+
+## Floating AI Assistant Integration
+
+Added floating AI assistant to User Dashboard for scan-aware Q&A.
+
+How assistant works (runtime flow):
+
+1. User asks a question in floating widget.
+2. Frontend sends request to `POST /api/assistant/chat`.
+3. Backend loads latest `output/recon.json` and builds scan context.
+4. Assistant engine applies intent routing:
+	- Rule path: risk/finding/remediation FAQs answered quickly.
+	- Model path: fine-tuned LoRA/full model generates contextual response.
+5. If model is unavailable or still loading, backend returns safe fallback response.
+6. Frontend shows response along with assistant state/model metadata.
+
+Assistant response pipeline uses a hybrid approach:
+
+- Fine-tuned model path (LoRA/full model) for natural language interaction
+- Report-grounded context injection from latest `output/recon.json`
+- Deterministic rule layer for fast and reliable answers to common security questions (risk, findings, remediation)
+
+- Frontend widget: `frontend/src/components/FloatingAssistant.jsx`
+- Frontend API client: `frontend/src/services/reconApi.js` (`askAssistant`)
+- Backend endpoint: `POST /api/assistant/chat`
+- Backend engine: `core/assistant/assistant_engine.py`
+
+### Model setup (Colab ZIP)
+
+By default, assistant runs in fallback mode using latest `output/recon.json` context.
+
+To use your fine-tuned model:
+
+```bash
+pip install transformers torch peft
+```
+
+Set one env variable before running backend:
+
+```bash
+export ASSISTANT_MODEL_ZIP="/absolute/path/to/model.zip"
+# or
+export ASSISTANT_MODEL_DIR="/absolute/path/to/extracted_model"
+```
+
+If your ZIP is a LoRA adapter, also set base model:
+
+```bash
+export ASSISTANT_BASE_MODEL="TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+```
+
+Notes:
+
+- First model warm-up can take time (download + load); this is expected on first run.
+- After warm-up, common questions are answered quickly through the hybrid path.
+- Very large local models on CPU are slower than hosted GPU inference.
+
+If model load fails, assistant automatically uses fallback response mode.
+
 ---
- 
-## ⚠️ Disclaimer
- 
+
+## Quick Start
+Quick start backend:
+```
+girish@DESKTOP-TO88QAR:~$ cd /mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main
+girish@DESKTOP-TO88QAR:/mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main$ source .venv/bin/activate
+(.venv) girish@DESKTOP-TO88QAR:/mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main$ export ASSISTANT_MODEL_ZIP="/mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main/core/assistant/recon-model/tinyllama-cyber-lora.zip"
+(.venv) girish@DESKTOP-TO88QAR:/mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main$ export ASSISTANT_BASE_MODEL="TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+(.venv) girish@DESKTOP-TO88QAR:/mnt/c/Users/IMxGIRISH/Desktop/Projects/reconplus-main$ python3 app.py
+```
+Then quick start frontend:
+PS C:\Users\IMxGIRISH\Desktop\Projects\reconplus-main> cd frontend
+PS C:\Users\IMxGIRISH\Desktop\Projects\reconplus-main\frontend> npm install
+PS C:\Users\IMxGIRISH\Desktop\Projects\reconplus-main\frontend> npm start
+
+---
+## Recent Backend/Frontend Integration Changes
+
+- Dashboard vulnerability charts now reflect backend `risk_summary` correctly.
+- Risk score now includes web vulnerability posture.
+- Dynamic scan progress added in User Dashboard.
+- Remedy engine upgraded from exact-name mapping to keyword-based matching.
+- Recommendations include MEDIUM web findings (`MEDIUM` priority).
+- PDF download is cache-disabled and timestamped to avoid stale files.
+- Assistant now uses a hybrid response flow to improve reliability and response latency.
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|---|---|
+| `subfinder/httpx/nuclei` not found | Add `$HOME/go/bin` to PATH |
+| PDF generation fails | Ensure `reportlab` is installed |
+| `ss` / `ip` missing | Use Linux/WSL2 |
+| Frontend cannot reach backend | Verify `REACT_APP_API_BASE_URL` |
+| Assistant model not loading | Check `ASSISTANT_MODEL_ZIP`/`ASSISTANT_MODEL_DIR` and install `transformers` + `torch` + `peft` |
+| Assistant responses are slow | Use `ASSISTANT_BASE_MODEL` + `HF_TOKEN`, keep model warm, and use hybrid rule path for frequent queries |
+
+---
+
+## Report Output
+
+ReconPlus generates:
+
+- `output/recon.json` (machine-readable)
+- `output/report.html` (web report)
+- `output/report.pdf` (printable report)
+
+---
+
+## Disclaimer
+
 ReconPlus is intended strictly for **educational purposes** and **authorized security testing**.
- 
+
 Unauthorized scanning of systems without proper permission may violate legal and ethical guidelines.
- 
-Users are responsible for ensuring they have explicit authorization before performing any security assessments.

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 
 export default function Signin() {
@@ -73,6 +73,12 @@ export default function Signin() {
             }
 
             // Role matches - redirect to dashboard
+            await updateDoc(doc(db, "users", user.uid), {
+                lastLoginAt: serverTimestamp(),
+            }).catch(() => {
+                // Non-blocking update: user can still proceed if this write is denied.
+            });
+
             navigate("/dashboard", { state: { role } });
         } catch (error) {
             setIsLoading(false);

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/firebase";
+import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import UserDashboard from "./UserDashboard";
+import AdminDashboard from "./AdminDashboard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -59,6 +61,18 @@ export default function Dashboard() {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    if (!user || loading) {
+      return;
+    }
+
+    if (user.role !== "admin" && user.role !== "user") {
+      signOut(auth).finally(() => {
+        navigate("/signin/user", { replace: true });
+      });
+    }
+  }, [user, loading, navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0e1a] text-white flex items-center justify-center">
@@ -70,18 +84,13 @@ export default function Dashboard() {
     );
   }
 
-  // Route to role-based dashboard
   if (user?.role === "user") {
     return <UserDashboard />;
   }
 
-  // Admin dashboard coming soon
-  return (
-    <div className="min-h-screen bg-[#0a0e1a] text-white flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-        <p className="text-gray-400">Dashboard for {user?.role} role coming soon...</p>
-      </div>
-    </div>
-  );
+  if (user?.role === "admin") {
+    return <AdminDashboard />;
+  }
+
+  return null;
 }

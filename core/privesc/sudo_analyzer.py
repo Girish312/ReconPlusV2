@@ -6,12 +6,17 @@ def analyze_sudo_rights():
 
     try:
         result = subprocess.run(
-            ["sudo", "-l"],
+            ["sudo", "-n", "-l"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
+            stdin=subprocess.DEVNULL,
         )
     except Exception:
+        return findings
+
+    # If sudo requires a password, skip this check without blocking the pipeline.
+    if result.returncode != 0:
         return findings
 
     output = result.stdout.lower()

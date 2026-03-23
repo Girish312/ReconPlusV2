@@ -21,6 +21,8 @@ export default function RoleSelection() {
     },
   ];
 
+  const availableRoles = mode === "signup" ? roles.filter((role) => role.id !== "admin") : roles;
+
   const handleRoleSelect = (role) => {
     navigate(`/${mode}/${role}`);
   };
@@ -49,7 +51,7 @@ export default function RoleSelection() {
             justify-center
             items-center
           ">
-            {roles.map((role) => (
+            {availableRoles.map((role) => (
               <div
                 key={role.id}
                 onClick={() => handleRoleSelect(role.id)}
@@ -106,6 +108,12 @@ export default function RoleSelection() {
               </div>
             ))}
           </div>
+
+          {mode === "signup" && (
+            <p className="mt-10 text-center text-sm text-gray-300">
+              Admin accounts are provisioned by the system owner and must use the admin sign-in flow.
+            </p>
+          )}
 
         </div>
       </div>

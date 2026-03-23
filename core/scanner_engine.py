@@ -27,7 +27,14 @@ def is_target_reachable(host, timeout=4):
     return False, None
 
 
-def run_scan(domain):
+def run_scan(domain, progress_callback=None):
+
+    def emit_progress(progress, stage, message):
+        if callable(progress_callback):
+            try:
+                progress_callback(progress, stage, message)
+            except Exception:
+                pass
 
     normalized_domain = normalize_target(domain)
 
@@ -66,9 +73,12 @@ def run_scan(domain):
     print(f"[ReconGuard] {len(live_hosts)} live hosts found")
 
     findings = []
+    host_count = len(live_hosts)
 
-    for host in live_hosts:
+    for idx, host in enumerate(live_hosts):
 
+        current_progress = 12 + ((idx / max(host_count, 1)) * 10)
+        emit_progress(current_progress, "web_scan", f"Scanning {host} ({idx + 1}/{host_count})")
         print(f"[ReconGuard] Running nuclei scan on {host}")
 
         vulns = run_nuclei(host)
@@ -90,5 +100,7 @@ def run_scan(domain):
             })
 
     print(f"[ReconGuard] Scan finished. {len(findings)} findings discovered.")
+    
+    emit_progress(22, "web_scan", f"Web scan completed. Found {len(findings)} vulnerabilities")
 
     return findings
