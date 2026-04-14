@@ -37,11 +37,14 @@ flowchart LR
   %% LAYER 3: RECON + VULN ENGINE
   %% =========================
   subgraph L3[3. Recon and Vulnerability Engine Layer]
+    SYSINFO["System Information\n(core/system_info.py)"]
+    NETINFO["Network Enumeration\n(core/network_info.py)"]
+    METADATA["Scan Metadata Generation\n(core/scan_tracker.py)"]
     NORM[Target Normalization]
-    SUB["Subdomain Enumeration\n(Subfinder + Amass)"]
+    SUB["Subdomain Enumeration\n(Subfinder only)"]
     LIVE["Live Host Detection\n(HTTPX)"]
     WEB["Web Vulnerability Scanning\n(Nuclei)"]
-    DIR["Directory Discovery\n(Feroxbuster)"]
+    REMEDY["Attach Remediation Guidance\n(core/remediation/remedy_engine.py)"]
     SVC["Local Service Enumeration\n(core/service_enum.py + ss)"]
     CLEAN["Service Deduplication\n(core/data_cleaner.py)"]
     CVE["CVE Enrichment\n(core/cve_enricher.py + core/cve_fetcher.py)"]
@@ -76,7 +79,7 @@ flowchart LR
     OUTPDF[(output/report.pdf)]
     MODEL["Assistant Model Storage\n(local dir or ZIP via env vars)"]
     NVD[("NVD API\nCVE data")]
-    WSL["Linux / WSL Tool Runtime\nss, ip, sudo, docker, nuclei, httpx, subfinder, amass, feroxbuster"]
+    WSL["Linux / WSL Tool Runtime\nss, ip, sudo, docker, nuclei, httpx, subfinder"]
   end
 
   %% =========================
@@ -103,8 +106,11 @@ flowchart LR
   %% =========================
   %% PIPELINE FLOW
   %% =========================
+  MAIN --> SYSINFO
+  MAIN --> NETINFO
+  MAIN --> METADATA
   MAIN --> NORM
-  NORM --> SUB --> LIVE --> WEB --> DIR
+  NORM --> SUB --> LIVE --> WEB --> REMEDY
   MAIN --> SVC --> CLEAN --> CVE --> EXP --> ADJ
   EXP --> DOCK
   ADJ --> PR --> PRCHECKS --> CHAIN --> MITRE --> ESC
@@ -116,14 +122,18 @@ flowchart LR
   MAIN --> HTML
   MAIN --> PDF
 
-  WEB --> REC
+  REMEDY --> REC
   PR --> REC
   CHAIN --> REC
 
   %% =========================
   %% OUTPUTS
   %% =========================
+  SYSINFO --> OUT
+  NETINFO --> OUT
+  METADATA --> OUT
   MAIN --> OUT
+  REMEDY --> OUT
   HTML --> OUTHTML
   PDF --> OUTPDF
   OUT --> API
@@ -148,16 +158,27 @@ flowchart LR
   WSL -.-> SUB
   WSL -.-> LIVE
   WSL -.-> WEB
-  WSL -.-> DIR
   WSL -.-> SVC
   WSL -.-> PR
   FIRE -.-> DASH
 ```
 
-## Notes for Designers
+## IEEE Paper Compliance Notes
 
-- Keep the recon engine as a sequential pipeline, not a single opaque box.
-- The assistant should be shown as reading the latest report context from `output/recon.json`, not from the NVD API directly.
-- Firestore is only for frontend user/account and scan-history persistence.
-- The main generated artifacts are `output/recon.json`, `output/report.html`, and `output/report.pdf`.
-- If using an image generator, prefer a 16:9 canvas with a layered, executive-style security theme.
+**Accuracy Statement:**
+This diagram represents the **actual implemented architecture** as of the current codebase. All components shown are actively used in the pipeline.
+
+**Key Implementation Details:**
+- System information, network enumeration, and scan metadata are collected upfront (core/system_info.py, core/network_info.py, core/scan_tracker.py)
+- Web scanning uses Subfinder (not Amass), HTTPX, and Nuclei with integrated remediation guidance
+- Directory discovery and technology fingerprinting (Feroxbuster, Wappalyzer) are available as modules but not integrated into the main pipeline
+- Local service enumeration uses `ss` command, not Nmap
+- All multi-module flows (web, privesc, attack chains) feed into the remediation and reporting layers
+- The assistant engine provides hybrid responses: rule-based fast path for common queries, optional LLM generation for complex insights
+
+**Design Guidelines:**
+- Keep the recon engine as a sequential pipeline, not a single opaque box
+- The assistant reads latest report context from `output/recon.json`, not NVD API
+- Firestore is for frontend user/account and scan history only
+- Main outputs: `output/recon.json`, `output/report.html`, `output/report.pdf`
+- Prefer 16:9 canvas with layered, executive-style cybersecurity theme
