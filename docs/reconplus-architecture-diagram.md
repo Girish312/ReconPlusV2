@@ -17,18 +17,18 @@ flowchart LR
   %% =========================
   subgraph L1[1. User Interface Layer - React + Firebase Frontend]
     U[User / Security Analyst]
-    DASH[User Dashboard\n(overview, tools, history)]
-    FORM[Target Input Form\n(domain submission)]
+    DASH[User Dashboard<br/>(overview, tools, history)]
+    FORM[Target Input Form<br/>(domain submission)]
     ASSISTW[Floating AI Assistant Widget]
-    FIRE[Firebase Auth + Firestore\n(user accounts + scan history)]
+    FIRE[Firebase Auth + Firestore<br/>(user accounts + scan history)]
   end
 
   %% =========================
   %% LAYER 2: API + ORCHESTRATION
   %% =========================
   subgraph L2[2. Backend API and Orchestration Layer - Flask]
-    API[Flask API - app.py\n/api/scan\n/api/scan/status\n/api/report/json\n/api/report/pdf\n/api/assistant/chat\n/api/assistant/status]
-    STAT[Scan Status Manager\n(in-memory state + progress)]
+    API[Flask API - app.py<br/>/api/scan<br/>/api/scan/status<br/>/api/report/json<br/>/api/report/pdf<br/>/api/assistant/chat<br/>/api/assistant/status]
+    STAT[Scan Status Manager<br/>(in-memory state + progress)]
     WORKER[Background Scan Worker Thread]
     MAIN[Pipeline Orchestrator - main.py]
   end
@@ -38,33 +38,33 @@ flowchart LR
   %% =========================
   subgraph L3[3. Recon and Vulnerability Engine Layer]
     NORM[Target Normalization]
-    SUB[Subdomain Enumeration\n(Subfinder + Amass)]
-    LIVE[Live Host Detection\n(HTTPX)]
-    WEB[Web Vulnerability Scanning\n(Nuclei)]
-    DIR[Directory Discovery\n(Feroxbuster)]
-    SVC[Local Service Enumeration\n(core/service_enum.py + ss)]
-    CLEAN[Service Deduplication\n(core/data_cleaner.py)]
-    CVE[CVE Enrichment\n(core/cve_enricher.py + core/cve_fetcher.py)]
-    EXP[Exposure Classification\n(core/exposure_classifier.py)]
-    DOCK[Docker Port Binding Inspection\n(core/docker_inspector.py)]
-    ADJ[Risk Adjustment\n(core/risk_adjuster.py)]
-    PR[Privilege Escalation Analysis\n(core/privesc/privesc_engine.py)]
-    PRCHECKS[Sudo, SUID, Writable Paths, Docker Group,\nCron, Env Hijack, Kernel Surface]
-    CHAIN[Attack Chain Builder\n(core/attack_chain/chain_builder.py)]
-    MITRE[MITRE ATT&CK Mapping\n(core/mitre/attack_mapper.py)]
-    ESC[Chain-Based Risk Escalation\n(core/risk/chain_escalator.py)]
+    SUB[Subdomain Enumeration<br/>(Subfinder + Amass)]
+    LIVE[Live Host Detection<br/>(HTTPX)]
+    WEB[Web Vulnerability Scanning<br/>(Nuclei)]
+    DIR[Directory Discovery<br/>(Feroxbuster)]
+    SVC[Local Service Enumeration<br/>(core/service_enum.py + ss)]
+    CLEAN[Service Deduplication<br/>(core/data_cleaner.py)]
+    CVE[CVE Enrichment<br/>(core/cve_enricher.py + core/cve_fetcher.py)]
+    EXP[Exposure Classification<br/>(core/exposure_classifier.py)]
+    DOCK[Docker Port Binding Inspection<br/>(core/docker_inspector.py)]
+    ADJ[Risk Adjustment<br/>(core/risk_adjuster.py)]
+    PR[Privilege Escalation Analysis<br/>(core/privesc/privesc_engine.py)]
+    PRCHECKS[Sudo, SUID, Writable Paths, Docker Group,<br/>Cron, Env Hijack, Kernel Surface]
+    CHAIN[Attack Chain Builder<br/>(core/attack_chain/chain_builder.py)]
+    MITRE[MITRE ATT&CK Mapping<br/>(core/mitre/attack_mapper.py)]
+    ESC[Chain-Based Risk Escalation<br/>(core/risk/chain_escalator.py)]
   end
 
   %% =========================
   %% LAYER 4: RISK + REPORTING
   %% =========================
   subgraph L4[4. Risk Intelligence and Reporting Layer]
-    SCORE[Risk Scoring Engine\n(core/scoring/cvss_engine.py)]
-    ANA[Risk Summary\n(core/risk_analyzer.py)]
-    REC[Automated Remediation\n(core/remediation/recommendations.py)]
-    SUM[Executive Summary\n(core/executive/summary.py)]
-    HTML[HTML Report Generator\n(core/reporting/html_report.py)]
-    PDF[PDF Report Generator\n(core/reporting/pdf_report.py)]
+    SCORE[Risk Scoring Engine<br/>(core/scoring/cvss_engine.py)]
+    ANA[Risk Summary<br/>(core/risk_analyzer.py)]
+    REC[Automated Remediation<br/>(core/remediation/recommendations.py)]
+    SUM[Executive Summary<br/>(core/executive/summary.py)]
+    HTML[HTML Report Generator<br/>(core/reporting/html_report.py)]
+    PDF[PDF Report Generator<br/>(core/reporting/pdf_report.py)]
   end
 
   %% =========================
@@ -74,9 +74,9 @@ flowchart LR
     OUT[(output/recon.json)]
     OUTHTML[(output/report.html)]
     OUTPDF[(output/report.pdf)]
-    MODEL[Assistant Model Storage\n(local dir or ZIP via env vars)]
-    NVD[(NVD API\nCVE data)]
-    WSL[Linux / WSL Tool Runtime\nss, ip, sudo, docker, nuclei, httpx, subfinder, amass, feroxbuster]
+    MODEL[Assistant Model Storage<br/>(local dir or ZIP via env vars)]
+    NVD[(NVD API<br/>CVE data)]
+    WSL[Linux / WSL Tool Runtime<br/>ss, ip, sudo, docker, nuclei, httpx, subfinder, amass, feroxbuster]
   end
 
   %% =========================
@@ -135,7 +135,7 @@ flowchart LR
   %% ASSISTANT
   %% =========================
   subgraph ASSIST_LAYER[AI Assistant Layer - Hybrid]
-    ASSIST_ENGINE[core/assistant/assistant_engine.py\nRule-based router + optional model generation]
+    ASSIST_ENGINE[core/assistant/assistant_engine.py<br/>Rule-based router + optional model generation]
   end
   ASSIST_ENGINE --> MODEL
   ASSIST_ENGINE --> OUT
