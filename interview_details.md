@@ -70,15 +70,15 @@ The system has four major layers:
 4. **Assistant Layer** - hybrid rule-based + optional model-based Q&A over the latest report.
 
 ```mermaid
-flowchart LR
-	U[User / Analyst] --> FE[React Frontend]
-	FE --> API[Flask API]
-	API --> PIPE[Python Scan Pipeline]
-	PIPE --> OUT[output/recon.json\noutput/report.html\noutput/report.pdf]
-	OUT --> FE
-	OUT --> ASSIST[Assistant Engine]
-	ASSIST --> FE
-	FE --> FIRE[Firebase Auth + Firestore]
+graph LR
+    U["User / Analyst"] --> FE["React Frontend"]
+    FE --> API["Flask API"]
+    API --> PIPE["Python Scan Pipeline"]
+    PIPE --> OUT["output/recon.json\noutput/report.html\noutput/report.pdf"]
+    OUT --> FE
+    OUT --> ASSIST["Assistant Engine"]
+    ASSIST --> FE
+    FE --> FIRE["Firebase Auth + Firestore"]
 ```
 
 ---
@@ -222,25 +222,25 @@ The main pipeline is in `main.py`, inside `run_recon(domain, progress_callback=N
 ### Pseudo-flow diagram
 
 ```mermaid
-flowchart TD
-	A[run_recon(domain)] --> B[run_scan(domain)]
-	B --> C[get_running_services]
-	C --> D[deduplicate_services]
-	D --> E[enrich_services_with_cves]
-	E --> F[classify_exposure]
-	F --> G[adjust_risk]
-	G --> H[run_privesc_analysis]
-	H --> I[build_attack_chains]
-	I --> J[enrich_chains_with_mitre]
-	J --> K[escalate_service_risk]
-	K --> L[score_services]
-	L --> M[calculate_overall_risk]
-	M --> N[analyze_risk]
-	N --> O[generate_recommendations]
-	O --> P[generate_executive_summary]
-	P --> Q[write output/recon.json]
-	Q --> R[generate_html_report]
-	R --> S[generate_pdf_report]
+graph TD
+    A["run_recon(domain)"] --> B["run_scan(domain)"]
+    B --> C["get_running_services"]
+    C --> D["deduplicate_services"]
+    D --> E["enrich_services_with_cves"]
+    E --> F["classify_exposure"]
+    F --> G["adjust_risk"]
+    G --> H["run_privesc_analysis"]
+    H --> I["build_attack_chains"]
+    I --> J["enrich_chains_with_mitre"]
+    J --> K["escalate_service_risk"]
+    K --> L["score_services"]
+    L --> M["calculate_overall_risk"]
+    M --> N["analyze_risk"]
+    N --> O["generate_recommendations"]
+    O --> P["generate_executive_summary"]
+    P --> Q["write output/recon.json"]
+    Q --> R["generate_html_report"]
+    R --> S["generate_pdf_report"]
 ```
 
 ---
