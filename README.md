@@ -195,12 +195,6 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 - [docker-compose.yml](docker-compose.yml) starts both containers together.
 - [.dockerignore](.dockerignore) and [frontend/.dockerignore](frontend/.dockerignore) keep the build context clean.
 
-### What to tell an interviewer
-
-If asked how the system can run end to end, say:
-
-> I split the system into two deployable parts. The UI is lightweight enough for Vercel, but the analysis engine needs a Linux environment and external scanning tools. For end-to-end execution I containerized the backend with Docker and used Docker Compose to start the frontend and backend together, while keeping the API URL configurable through environment variables.
-
 ### Vercel note
 
 Vercel is still useful for the frontend, but not for the full scan engine. The scan backend depends on long-running jobs and OS-level tools, so it belongs on Docker, a VM, or another always-on Linux host.
