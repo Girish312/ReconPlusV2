@@ -198,6 +198,54 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
 ---
 
+## Vercel Deployment
+
+ReconPlus is now configured so the React frontend can be deployed on Vercel from the repository root.
+
+### What is deployable on Vercel
+
+- The React dashboard.
+- Firebase authentication and Firestore history.
+- The static UI, routing, and assistant shell.
+
+### What should not run on Vercel
+
+The full security analysis backend should not be hosted on Vercel because it depends on:
+
+- long-running background scans
+- Linux tools like `ss`, `ip`, `sudo`, `find`, `docker`
+- external scanners like `subfinder`, `httpx`, and `nuclei`
+- stateful scan progress tracking
+
+Those requirements fit a Linux VM, container host, or another always-on backend platform much better than Vercel’s serverless model.
+
+### What was added for Vercel
+
+- [package.json](package.json) at the repository root to provide a build script for the frontend.
+- [vercel.json](vercel.json) to tell Vercel how to build the app and route all SPA paths to `index.html`.
+
+### How to deploy on Vercel
+
+1. Import the GitHub repository into Vercel.
+2. Keep the project root as the repository root.
+3. Let Vercel use the root build script from [package.json](package.json).
+4. Set these environment variables in Vercel:
+	- `REACT_APP_API_BASE_URL` pointing to your deployed backend URL.
+	- Firebase values used by `frontend/src/firebase/firebase.js`.
+5. Deploy the frontend.
+
+### Backend hosting model
+
+Run the Python analysis backend separately on a Linux-capable host. The frontend on Vercel will call that backend through `REACT_APP_API_BASE_URL`.
+
+### What to say in an interview
+
+If asked why Vercel cannot run the full project, say:
+
+> Vercel is used for the React UI, but the analysis engine needs background execution, OS-level tools, and long-running security scans. So I split the deployment: the frontend is Vercel-friendly, while the backend runs on a Linux host that can support the scanning pipeline.
+
+---
+
 ## Frontend Integration Notes
 
 Core routes used by dashboard:
