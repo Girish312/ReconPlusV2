@@ -228,6 +228,8 @@ This is the most practical arrangement for this project because the backend need
 
 - [vercel.json](vercel.json) for SPA routing on Vercel.
 - [package.json](package.json) at the repo root for Vercel build orchestration.
+- [.vercelignore](.vercelignore) to keep Vercel from packaging the Python backend and large model artifacts.
+- [frontend/vercel.json](frontend/vercel.json) for a clean frontend-only Vercel deployment if you set the project root to `frontend/`.
 - [render.yaml](render.yaml) for Render backend deployment.
 - [.env.example](.env.example) for shared environment variables.
 
@@ -242,16 +244,18 @@ This is the most practical arrangement for this project because the backend need
 ### Deploy frontend to Vercel
 
 1. Import the same GitHub repository into Vercel.
-2. Keep the root build setup so Vercel uses [package.json](package.json) and [vercel.json](vercel.json).
-3. Set `REACT_APP_API_BASE_URL` to your Render backend URL.
-4. Set the Firebase environment variables used by [frontend/src/firebase/firebase.js](frontend/src/firebase/firebase.js).
-5. Deploy the frontend.
+2. If Vercel is still scanning Python files, set the project root to `frontend/` in Vercel project settings.
+3. Vercel will then use [frontend/package.json](frontend/package.json) and [frontend/vercel.json](frontend/vercel.json).
+4. Set `REACT_APP_API_BASE_URL` to your Render backend URL.
+5. Set the Firebase environment variables used by [frontend/src/firebase/firebase.js](frontend/src/firebase/firebase.js).
+6. Deploy the frontend.
 
 ### What the final public setup looks like
 
 - Frontend URL: your Vercel domain.
 - Backend URL: your Render domain.
 - The dashboard calls the backend through `REACT_APP_API_BASE_URL`.
+- The frontend deployment must not include the Python backend bundle.
 
 ### Demo note
 

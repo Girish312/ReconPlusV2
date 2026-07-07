@@ -1,0 +1,22 @@
+# Backend / Python analysis stack
+app.py
+main.py
+config.py
+requirements.txt
+core/**
+modules/**
+templates/**
+output/**
+
+# Local deployment assets that Vercel should not package
+Dockerfile.backend
+docker-compose.yml
+render.yaml
+frontend/requirements.txt
+frontend/Dockerfile
+frontend/.dockerignore
+
+# Large model and notebook artifacts
+core/assistant/recon-model/**
+frontend/recon-model/**
+*.ipynb
