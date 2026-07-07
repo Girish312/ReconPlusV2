@@ -152,6 +152,123 @@ wsl --install -d Ubuntu
 
 ---
 
+## End-to-End Local Deployment with Docker
+
+The full system now has a Docker-based path that runs the React frontend and the Flask analysis backend together.
+
+### What this solves
+
+- The backend runs inside Linux, so `ss`, `ip`, `sudo`, `docker`, `subfinder`, `httpx`, and `nuclei` are available.
+- The frontend can talk to the backend at `http://localhost:5000`.
+- You do not need to install the full security toolchain directly on your host machine.
+
+### Start the full system
+
+```bash
+docker compose up --build
+```
+
+### What opens where
+
+- Frontend: `http://127.0.0.1:3000`
+- Backend API: `http://127.0.0.1:5000`
+
+### Environment variables for Docker
+
+Set these in your shell or a local `.env` file before running `docker compose up --build`:
+
+```env
+NVD_API_KEY=your_nvd_key
+REACT_APP_FIREBASE_API_KEY=your_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+### Files added for Docker
+
+- [Dockerfile.backend](Dockerfile.backend) builds the Python + Linux tools backend image.
+- [frontend/Dockerfile](frontend/Dockerfile) builds the React frontend image.
+- [docker-compose.yml](docker-compose.yml) starts both containers together.
+- [.dockerignore](.dockerignore) and [frontend/.dockerignore](frontend/.dockerignore) keep the build context clean.
+
+### What to tell an interviewer
+
+If asked how the system can run end to end, say:
+
+> I split the system into two deployable parts. The UI is lightweight enough for Vercel, but the analysis engine needs a Linux environment and external scanning tools. For end-to-end execution I containerized the backend with Docker and used Docker Compose to start the frontend and backend together, while keeping the API URL configurable through environment variables.
+
+### Vercel note
+
+Vercel is still useful for the frontend, but not for the full scan engine. The scan backend depends on long-running jobs and OS-level tools, so it belongs on Docker, a VM, or another always-on Linux host.
+
+---
+
+## Free Production Deployment for Demo
+
+For a free public demo that you can show in an interview, use a split deployment:
+
+- Frontend on Vercel
+- Backend on Render free tier using Docker
+
+This is the most practical arrangement for this project because the backend needs a Linux runtime and CLI tools, while the React dashboard is light enough for a static frontend host.
+
+### Why this is the right production shape
+
+- Vercel is excellent for the dashboard and routing.
+- Render can run the Flask backend in Docker.
+- The backend can still run the main scan pipeline, including `ss`, `ip`, `subfinder`, `httpx`, and `nuclei`.
+- Docker-socket-based inspection is limited on hosted containers unless the host exposes the Docker daemon, so those checks may return fewer results on Render than on a local Linux machine.
+- The frontend can reach the backend with a public HTTPS URL.
+
+### Files added for production deployment
+
+- [vercel.json](vercel.json) for SPA routing on Vercel.
+- [package.json](package.json) at the repo root for Vercel build orchestration.
+- [render.yaml](render.yaml) for Render backend deployment.
+- [.env.example](.env.example) for shared environment variables.
+
+### Deploy backend to Render
+
+1. Push the repository to GitHub.
+2. Create a new Render Web Service from the repo.
+3. Use the `render.yaml` blueprint, or point Render to [Dockerfile.backend](Dockerfile.backend).
+4. Set `NVD_API_KEY` in Render environment variables.
+5. Deploy and note the public backend URL.
+
+### Deploy frontend to Vercel
+
+1. Import the same GitHub repository into Vercel.
+2. Keep the root build setup so Vercel uses [package.json](package.json) and [vercel.json](vercel.json).
+3. Set `REACT_APP_API_BASE_URL` to your Render backend URL.
+4. Set the Firebase environment variables used by [frontend/src/firebase/firebase.js](frontend/src/firebase/firebase.js).
+5. Deploy the frontend.
+
+### What the final public setup looks like
+
+- Frontend URL: your Vercel domain.
+- Backend URL: your Render domain.
+- The dashboard calls the backend through `REACT_APP_API_BASE_URL`.
+
+### Demo note
+
+Render free services can sleep when idle. Before showing the project to an interviewer, hit the backend health endpoint once so it wakes up:
+
+```bash
+curl https://your-backend-url.onrender.com/api/health
+```
+
+### Interview explanation
+
+If asked how you made it production-ready for free, say:
+
+> I split the deployment into a static React frontend on Vercel and a Linux Docker backend on Render. That gives me a public demo URL without paying for infrastructure, while preserving the OS-level tooling and background scan behavior that the project needs.
+
+---
+
 ## NVD API Key
 
 Set your NVD API key in `config.py`:
@@ -195,54 +312,6 @@ REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 REACT_APP_FIREBASE_APP_ID=your_app_id
 REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
-
----
-
-## Vercel Deployment
-
-ReconPlus is now configured so the React frontend can be deployed on Vercel from the repository root.
-
-### What is deployable on Vercel
-
-- The React dashboard.
-- Firebase authentication and Firestore history.
-- The static UI, routing, and assistant shell.
-
-### What should not run on Vercel
-
-The full security analysis backend should not be hosted on Vercel because it depends on:
-
-- long-running background scans
-- Linux tools like `ss`, `ip`, `sudo`, `find`, `docker`
-- external scanners like `subfinder`, `httpx`, and `nuclei`
-- stateful scan progress tracking
-
-Those requirements fit a Linux VM, container host, or another always-on backend platform much better than Vercel’s serverless model.
-
-### What was added for Vercel
-
-- [package.json](package.json) at the repository root to provide a build script for the frontend.
-- [vercel.json](vercel.json) to tell Vercel how to build the app and route all SPA paths to `index.html`.
-
-### How to deploy on Vercel
-
-1. Import the GitHub repository into Vercel.
-2. Keep the project root as the repository root.
-3. Let Vercel use the root build script from [package.json](package.json).
-4. Set these environment variables in Vercel:
-	- `REACT_APP_API_BASE_URL` pointing to your deployed backend URL.
-	- Firebase values used by `frontend/src/firebase/firebase.js`.
-5. Deploy the frontend.
-
-### Backend hosting model
-
-Run the Python analysis backend separately on a Linux-capable host. The frontend on Vercel will call that backend through `REACT_APP_API_BASE_URL`.
-
-### What to say in an interview
-
-If asked why Vercel cannot run the full project, say:
-
-> Vercel is used for the React UI, but the analysis engine needs background execution, OS-level tools, and long-running security scans. So I split the deployment: the frontend is Vercel-friendly, while the backend runs on a Linux host that can support the scanning pipeline.
 
 ---
 

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: reconplus-backend
+    env: docker
+    dockerfilePath: Dockerfile.backend
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: NVD_API_KEY
+        sync: false
